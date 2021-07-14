@@ -1,0 +1,54 @@
+package compileMd;
+
+import java.util.Scanner;
+import compilation.Projet;
+import db.compilation.DBCompilation;
+import gestionFichier.WorkFolder;
+
+
+
+/**
+ * Classe de lancement du projet
+ * @author nicolas
+ */
+public class Start {
+
+	/**
+	 * Méthode de démarage de l'application.
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		
+		Scanner keyb = new Scanner(System.in);
+		System.out.println("Chemin du répertoire ?");
+		
+		String chemin = keyb.nextLine();
+		keyb.close();
+		
+		try {
+			
+			DBCompilation base = new DBCompilation();
+			
+			if(chemin.isBlank()) {
+				chemin = base.getLastChemin();
+			}
+			
+			System.out.println("Traitement du répertoire : '" + chemin + "'");
+			
+			WorkFolder.initialise(chemin);
+			
+			WorkFolder repertoireDeTravail = WorkFolder.getFolder();
+			
+			repertoireDeTravail.getFichiers().forEach(x -> x.action());
+			repertoireDeTravail.getFichiers().forEach(x -> Projet.ajouterALaCompilation(x));
+			
+			Projet.lancerLaCompilation();
+			
+			base.setChemin(chemin);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+}

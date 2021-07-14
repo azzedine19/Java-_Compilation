@@ -1,0 +1,88 @@
+package compilation;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
+
+public class DbCompilation {
+	
+	public Connection connBD; 
+	   
+    private static DbCompilation Connexion;
+    
+    public static DbCompilation getConnexion() {
+       //si la connexion n'existe pas 
+        if(Connexion == null) {
+        	//j'instancie la connexion 
+            Connexion = new DbCompilation();
+        }
+       
+        return Connexion;
+    }
+	private DbCompilation() {
+		
+		String url = "jdbc:sqlite:C:/Users/Badro/Desktop/eclipse-workspace-5-bis/eclipse-workspace-5-bis/BDD/BDD.db";
+			try {
+				connBD = DriverManager.getConnection(url);
+				} catch (Exception e) {
+				
+				System.out.println(e.getMessage());
+				}
+			
+			insertTable();
+			
+		
+		}
+	 // methode insertion des tables
+	 private void insertTable() {
+		try {
+			if (connBD != null) {
+				
+				 String sql = """
+				 		CREATE TABLE IF NOT EXISTS chemin(
+				 		id INTEGER PRYMARY KEY,
+				 		urlChemin text NOT NULL,
+				 		last INTEGER NOT NULL
+				 		)"""; 
+				 
+				 String sql2 ="""
+				 		CREATE TABLE IF NOT EXISTS Compile
+						(
+						id INTEGER PRIMARY KEY,
+						titreLivre TEXT NOT NULL,
+						dteCompile TEXT NOT NULL,
+						nbMotsLivre INTEGER DEFAULT 0,
+						nbMotsCompile INTEGER DEFAULT 0
+						)
+				 		""" 
+				 try(Statement stmt = connBD.createStatement();) {
+					 stmt.execute(sql);
+					
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} 
+		
+	      
+	     
+	 }
+	 public void finalize() {
+		 try { 
+			  this.connBD.close();
+			 }catch(SQLException e) {
+				e.printStackTrace();
+			 }
+	 }
+	 public int getIdPathAct() {
+		 int Id = 0;
+		 return Id;
+	 }
+
+}

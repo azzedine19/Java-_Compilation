@@ -1,0 +1,100 @@
+package compilation;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
+import java.sql.ResultSet;
+
+public class DbCompilation {
+	
+	public Connection connBD; 
+	   
+    private static DbCompilation Connexion;
+    
+    public static DbCompilation getConnexion() {
+       //si la connexion n'existe pas 
+        if(Connexion == null) {
+        	//j'instancie la connexion 
+            Connexion = new DbCompilation();
+        }
+       
+        return Connexion;
+    }
+	private DbCompilation() {
+		
+		String url = "jdbc:sqlite:C:/Users/Badro/Desktop/eclipse-workspace-5-bis/eclipse-workspace-5-bis/BDD/BDD.db";
+			try {
+				connBD = DriverManager.getConnection(url);
+				} catch (Exception e) {
+				
+				System.out.println(e.getMessage());
+				}
+			
+			insertTable();
+			
+		
+		}
+	 // methode insertion des tables
+	 private void insertTable() {
+		try {
+			if (connBD != null) {
+				
+				 String sql = """
+				 		CREATE TABLE IF NOT EXISTS chemin(
+				 		id INTEGER PRYMARY KEY,
+				 		urlChemin text NOT NULL,
+				 		last INTEGER NOT NULL
+				 		)"""; 
+				 
+				 String sql2 ="""
+				 		CREATE TABLE IF NOT EXISTS compilation(
+						id INTEGER PRIMARY KEY,
+						titreLivre TEXT NOT NULL,
+						dtCompilation TEXT NOT NULL,
+						nbMotsLivre INTEGER NOT NULL,
+						nbMotsCompile INTEGER NOT NULL
+						)""" ;
+				 try(Statement stmt = connBD.createStatement();) {
+					 stmt.execute(sql);
+					 stmt.execute(sql2);
+					
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} 
+		
+	      
+	     
+	 }
+	 public void finalize() {
+		 try { 
+			  this.connBD.close();
+			 }catch(SQLException e) {
+				e.printStackTrace();
+			 }
+	 }
+	 // je récupère l'dentifient du chemin 
+	 public int getIdUrlChemin(String chemin) {
+		 int Id = 0;
+		 String query = " SELECT id FROM chemin WHERE urlChemin = ?";
+		 try (PreparedStatement stmt = connBD.prepareStatement(query)) {
+				stmt.setString(1, chemin);
+				var result = stmt.executeQuery();
+				result.first();
+				return result.getInt("id");
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}		
+		 		
+		 return Id;
+	 }
+
+}

@@ -1,0 +1,6 @@
+INDEX VERSION 1.131+C:\Users\Badro\Desktop\eclipse-workspace-5-bis\eclipse-workspace-5-bis\.metadata\.plugins\org.eclipse.jdt.core
+1723949265.index
+2365400422.index
+1761796455.index
+2579780126.index
+1642175237.index

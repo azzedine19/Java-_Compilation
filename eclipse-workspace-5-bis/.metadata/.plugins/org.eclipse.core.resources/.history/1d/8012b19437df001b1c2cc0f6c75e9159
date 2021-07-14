@@ -1,0 +1,68 @@
+package compilation;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
+
+public class DbCompilation {
+	public Connection connBD; 
+	   
+    private static DbCompilation Connexion;
+    public static DbCompilation getConnexion() throws Exception {
+       
+        if(Connexion == null) {
+            Connexion = new DbCompilation();
+        }
+       
+        return Connexion;
+    }
+	public DbCompilation() {
+		// TODO Auto-generated constructor stub
+		
+			DbCompilation maBdd = new DbCompilation();
+			
+			connBD = maBdd.createNewDatabase(null);
+			
+		
+		}
+	 private Connection createNewDatabase(String fileName) {
+
+	        String url = "jdbc:sqlite:" + fileName;
+
+	        try (Connection conn = DriverManager.getConnection(url)) {
+	            if (conn != null) {
+	                DatabaseMetaData meta = conn.getMetaData();
+	                System.out.println("Le nom du driver est " + meta.getDriverName());
+	                System.out.println("une nouvelle base de données a été créé.");
+	                return conn;
+	            }
+
+	        } catch (SQLException e) {
+	            System.out.println(e.getMessage());
+	        }
+	        return null;
+	    }
+	 
+	 private void insertTable() throws SQLException {
+		 
+		Statement stmt = connBD.createStatement();
+	      //étape 4: exécuter la requéte
+	      String sql = "CREATE TABLE IF NOT EXIST chemin  " +
+	                   "(id INTEGER PRYMARY KEY,\n, " +
+	                   " urlChemin text NOT NULL,\n, " + 
+	                   " last INTEGER NOT NULL\n"; 
+	      stmt.executeUpdate(sql);
+	 }
+	 public void finalize() {
+		 try { 
+			  this.connBD.close();
+			 }catch(SQLException e) {
+				e.printStackTrace();
+			 }
+	 }
+
+}
